@@ -9,3 +9,10 @@ def index(request):
     context = RequestContext(request, {
     })
     return HttpResponse(template.render(context))
+
+def pete(request):
+   # return HttpResponse("Hello, world. You're at the medicaiton app index.")
+    template = loader.get_template('medicationApp/pete.html')
+    context = RequestContext(request, {
+    })
+    return HttpResponse(template.render(context))
