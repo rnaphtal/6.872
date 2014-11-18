@@ -16,3 +16,11 @@ def pete(request):
     context = RequestContext(request, {
     })
     return HttpResponse(template.render(context))
+
+def test(request):
+   # return HttpResponse("Hello, world. You're at the medicaiton app index.")
+    template = loader.get_template('medicationApp/test.html')
+    context = RequestContext(request, {
+    })
+    print "hilary is awesome!!! <3 Rach"
+    return HttpResponse(template.render(context))

@@ -12,4 +12,5 @@ urlpatterns = patterns('',
     #url(r'^$', include('medicationApp.urls')),
     url(r'^$', views.index, name='index'),
     url(r'^pete/', views.pete, name='pete'),
+    url(r'^smartapp/index.html', views.test, name='test'),
 )
