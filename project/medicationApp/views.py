@@ -1,6 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import RequestContext, loader
+from django.core.mail import send_mail
+from .models import *
+from django.core import serializers
+import json
+
+X_FRAME_OPTIONS = 'ALLOW'
 
 # Create your views here.
 def index(request):
@@ -17,10 +23,29 @@ def pete(request):
     })
     return HttpResponse(template.render(context))
 
+def getPatient(request, patientId, patientName):
+   print patientId, patientName
+   currentPatient=Patient.objects.filter(patient_id=patientId)
+   print currentPatient
+   if (not currentPatient):
+       currentPatient = Patient(patient_id=patientId, name=patientName)
+       currentPatient.save()
+       currentPatient=Patient.objects.filter(patient_id=patientId)
+   #foos = Patient.objects.all()
+   data = serializers.serialize('json', currentPatient)
+   return HttpResponse(data, content_type="application/json")
+
 def test(request):
    # return HttpResponse("Hello, world. You're at the medicaiton app index.")
     template = loader.get_template('medicationApp/test.html')
     context = RequestContext(request, {
     })
     print "hilary is awesome!!! <3 Rach"
+##    send_mail('Subject here', 'Here is the message.', 'rnaphtal@gmail.com',
+##    ['mymeds@mit.edu'], fail_silently=False)
+##    print "email"
     return HttpResponse(template.render(context))
+
+
+
+

@@ -10,7 +10,9 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^medication', include('medicationApp.urls')),
     #url(r'^$', include('medicationApp.urls')),
-    url(r'^$', views.index, name='index'),
+    
     url(r'^pete/', views.pete, name='pete'),
-    url(r'^smartapp/index.html', views.test, name='test'),
+    url(r'^smartapp', views.index, name='test'),
+    url(r'^getData/patient/(?P<patientId>[0-9]*)/(?P<patientName>[\w]*)', views.getPatient),
+    url(r'^$', views.index, name='index'),
 )
