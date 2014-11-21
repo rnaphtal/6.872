@@ -26,13 +26,31 @@ def pete(request):
 def getPatient(request, patientId, patientName):
    print patientId, patientName
    currentPatient=Patient.objects.filter(patient_id=patientId)
-   print currentPatient
+   #print currentPatient
+   #print request
    if (not currentPatient):
        currentPatient = Patient(patient_id=patientId, name=patientName)
        currentPatient.save()
        currentPatient=Patient.objects.filter(patient_id=patientId)
-   #foos = Patient.objects.all()
    data = serializers.serialize('json', currentPatient)
+   return HttpResponse(data, content_type="application/json")
+
+def getMedication(request):
+   #print request
+   parameters=request.GET.dict()
+   currentMedication=Medication.objects.filter(drugName=parameters["drugname"]).filter(startDate=parameters["startDate"])
+   print currentMedication
+   if (not currentMedication):
+       currentMedication = Medication(drugName=parameters["drugname"],
+                                      instructions=parameters["instructions"],
+                                      startDate=parameters["startDate"],
+                                      freqValue=parameters["freqvalue"],
+                                      freqUnit=parameters["frequnit"],
+                                      quantityValue=parameters["quantityvalue"],
+                                      quantityUnit=parameters["quantityunit"])
+       currentMedication.save()
+       currentMedication= Medication.objects.filter(drugName=parameters["drugname"]).filter(startDate=parameters["startDate"])
+   data = serializers.serialize('json', currentMedication)
    return HttpResponse(data, content_type="application/json")
 
 def test(request):

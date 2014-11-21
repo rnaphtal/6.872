@@ -20,6 +20,8 @@ class Medication(models.Model):
     quantityUnit = models.CharField(max_length=50)
     setAlarms= models.ManyToManyField(SetAlarm, blank=True)
     recordedDoses= models.ManyToManyField(RecordedTaken, blank=True)
+    def __unicode__(self):
+        return self.drugName
 
 class Patient(models.Model):
     name = models.CharField(max_length=50)
@@ -27,4 +29,5 @@ class Patient(models.Model):
     medications= models.ManyToManyField(Medication, blank=True)
 
     def __unicode__(self):
-        return self.name+":"+self.patient_id
+        return self.name
+

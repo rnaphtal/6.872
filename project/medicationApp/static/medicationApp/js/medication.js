@@ -5,9 +5,11 @@ $(location).attr('href',url);
   //alert( "Handler for .click() called." );
 });
 
-
+var currentMedicationsForRecord={};
 
 SMART.ready(function(){
+
+	
 	console.log(SMART.record);
 	// http://localhost:8000/getData/patient/1993/amy
 	$.get('http://localhost:8000/getData/patient/'+SMART.record.id+'/'+SMART.record.full_name, function(data){
@@ -84,6 +86,7 @@ function addMedsToTable (med_names) {
 		var frequnit = single_med.frequnit.toString().substring(1,single_med.frequnit.toString().length-1);
 		var quantityvalue = single_med.quantityvalue.toString().substring(1,single_med.quantityvalue.toString().length-1);
 		var quantityunit = single_med.quantityunit.toString().substring(2,single_med.quantityunit.toString().length-2);
+		var instructions = single_med.notes.toString().substring(1,single_med.notes.toString().length-1);
 		var formattedFrequency = frequnit;
 		if (frequnit.valueOf()=="/d") {
 			formattedFrequency=" per day"
@@ -95,6 +98,33 @@ function addMedsToTable (med_names) {
 			formattedFrequency=" per month"
 		}
 
+		data={
+			'drugname' : drugname,
+			'startDate' : startDate,
+			'freqvalue' : freqvalue,
+			'frequnit' : frequnit,
+			'quantityvalue' : quantityvalue,
+			'quantityunit' : quantityunit,
+			'patient_id' : SMART.record.id, 
+			'instructions': instructions,
+			'rowValue': currentRowNumber
+		}
+
+		// console.log("Should call Medication post called");
+		$.get('http://localhost:8000/getData/medication/', data, function(result) {
+			// console.log("Medication post called");
+			for (x in result) {
+   		 		// console.log(result[x].pk)
+   		 		currentMedicationsForRecord[result[x].pk]=data;
+   		 		console.log(result[x].fields.setAlarms.length);
+   		 		if (result[x].fields.setAlarms.length>0) {
+   		 			console.log("should change text");
+   		 			$('#editButton'+data.rowValue).html("Edit Alarm")
+   		 		}
+			}
+			console.log(currentMedicationsForRecord);
+			//console.log(result[0].pk);
+		});
 
 		var newRowText = '<tr><td>'+drugname+'</td><td>'+startDate+
 			'</td><td>'+freqvalue+" "+formattedFrequency+'</td><td>'+
@@ -117,7 +147,7 @@ function makeButtonListener(currentMedication, currentRowNumber) {
 function generateButtonDivText (currentMedication, currentgeneratingrowNumber) {
 	// console.log(currentgeneratingrowNumber);
 		return ('<td><button type="button" class="btn btn-default editButton" id="editButton'+currentgeneratingrowNumber+
-			'"> Edit Alarm</button></td></tr>');
+			'"> Create Alarm</button></td></tr>');
 	}
 
 function updateModal(single_med) {

@@ -13,6 +13,7 @@ urlpatterns = patterns('',
     
     url(r'^pete/', views.pete, name='pete'),
     url(r'^smartapp', views.index, name='test'),
-    url(r'^getData/patient/(?P<patientId>[0-9]*)/(?P<patientName>[\w]*)', views.getPatient),
+    url(r'^getData/patient/(?P<patientId>[0-9]*)/(?P<patientName>[\w\s]*)', views.getPatient),
+    url(r'^getData/medication/', views.getMedication),
     url(r'^$', views.index, name='index'),
 )
