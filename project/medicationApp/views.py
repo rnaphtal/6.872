@@ -64,6 +64,9 @@ def test(request):
 ##    print "email"
     return HttpResponse(template.render(context))
 
-
-
-
+def my_calendar(request):
+   # return HttpResponse("Hello, world. You're at the medicaiton app index.")
+    template = loader.get_template('medicationApp/my_calendar.html')
+    context = RequestContext(request, {
+    })
+    return HttpResponse(template.render(context))
