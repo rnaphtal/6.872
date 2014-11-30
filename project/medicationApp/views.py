@@ -70,3 +70,9 @@ def my_calendar(request):
     context = RequestContext(request, {
     })
     return HttpResponse(template.render(context))
+
+def record(request):
+    template = loader.get_template('medicationApp/record.html')
+    context = RequestContext(request, {
+    })
+    return HttpResponse(template.render(context))

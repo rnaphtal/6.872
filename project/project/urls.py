@@ -16,5 +16,6 @@ urlpatterns = patterns('',
     url(r'^getData/patient/(?P<patientId>[0-9]*)/(?P<patientName>[\w\s]*)', views.getPatient),
     url(r'^getData/medication/', views.getMedication),
     url(r'^$', views.index, name='index'),
-    url(r'^my_calendar/', views.my_calendar, name='my_calendar')
+    url(r'^my_calendar/', views.my_calendar, name='my_calendar'),
+    url(r'^record/', views.record, name='my_calendar')
 )

@@ -10,22 +10,15 @@ var currentMedicationsForRecord={};
 SMART.ready(function(){
 
 	
-	// console.log(SMART.record);
-	// http://localhost:8000/getData/patient/1993/amy
 	$.get('http://localhost:8000/getData/patient/'+SMART.record.id+'/'+SMART.record.full_name, function(data){
-	// $.get('/patient/'+SMART.record.id+"/"+SMART.record.full_name, , function(data){
-               // console.log(data);
+
            });
-         // document.getElementById('name').innerHTML = SMART.record.full_name;
          SMART.get_medications().success(function(meds) {
            // console.log(meds);
            var med_names = meds.graph
              .where("?med rdf:type sp:Medication")
              .where("?med sp:drugName ?drug_name_code")
              .where("?drug_name_code dcterms:title ?drugname")
-             // .where("?medication sp:quantity ?quantity_code");
-    //          .optional(" ?drug_code sp:code ?cui")
-			 // .optional(" ?drug_code dcterms:title ?medlabel")
 			 .optional(" ?med sp:strength ?strength")
 			 .optional(" ?med sp:strengthUnit ?strengthUnit")
 			 .optional(" ?med sp:form ?form")
@@ -45,27 +38,6 @@ SMART.ready(function(){
 		    .where("?quantity sp:unit ?quantityunit");
              // console.log(med_names);
              addMedsToTable(med_names);
-      //        var fulfillments = meds.graph
-		    // .where("?med rdf:type sp:Medication")
-		    // .where("?med sp:fulfillment ?f")
-		    // .where("?f dcterms:date ?d")
-		    // .optional("?f sp:dispenseDaysSupply ?q");
-		    // console.log(fulfillments);
-		    // var frequencies = meds.graph
-		    // .where("?med rdf:type sp:Medication")
-		    // .where("?med sp:frequency ?f")
-		    // // .where("?f dcterms:date ?d")
-		    // .optional("?f sp:value ?value")
-		    // optional("?f sp:unit ?unit");
-		    // console.log(frequencies);
-      //       //  var med_dosages = meds.graph
-      //       //  .where("?medication rdf:type sp:Medication")
-      //       //  .where("?medication sp:quantity ?quantity_outer")
-      //       //  .where("?medication sp:ValueAndUnit ?quantity_code")
-      //       //  // .where("?quantity_outer sp:ValueAndUnit ?quantity_code")
-      //       //  // .where("?quantity_code sp:value ?value")
-      //       //  // .where("?quantity_code sp:unit ?unit");
-      //       // console.log(med_dosages);
          }).error(function(err) { alert ("An error has occurred"); });
        });
 
@@ -117,10 +89,10 @@ function addMedsToTable (med_names) {
    		 		// console.log(result[x].pk)
    		 		currentMedicationsForRecord[result[x].pk]=data;
    		 		// console.log(result[x].fields.setAlarms.length);
-   		 		if (result[x].fields.setAlarms.length>0) {
-   		 			// console.log("should change text");
-   		 			$('#editButton'+data.rowValue).html("Edit Alarm")
-   		 		}
+   		 		// if (result[x].fields.setAlarms.length>0) {
+   		 		// 	console.log("should change text");
+   		 		// 	$('#editButton'+data.rowValue).html("I took it!")
+   		 		// }
 			}
 			// console.log(currentMedicationsForRecord);
 			//console.log(result[0].pk);
@@ -147,7 +119,7 @@ function makeButtonListener(currentMedication, currentRowNumber) {
 function generateButtonDivText (currentMedication, currentgeneratingrowNumber) {
 	// console.log(currentgeneratingrowNumber);
 		return ('<td><button type="button" class="btn btn-default editButton" id="editButton'+currentgeneratingrowNumber+
-			'"> Create Alarm</button></td></tr>');
+			'"> I took it! </button></td></tr>');
 	}
 
 function updateModal(single_med) {
@@ -166,23 +138,23 @@ function updateModal(single_med) {
 		formattedFrequency=" per month"
 	}
 
-	$('#myModalLabel').html("Modify alarm for "+drugname);
+	$('#myModalLabel').html("Record dose of "+drugname);
 	if (parseInt(freqvalue)==1) {
 		$('#modalFrequency').html("This medication should be taken "+freqvalue+" time " + formattedFrequency+".");
 	} else{
 		$('#modalFrequency').html("This medication should be taken "+freqvalue+" times " + formattedFrequency+".");
 	}
 	
-	$('#modalTimeSelections').html("");
-	for (i = 0; i < parseInt(freqvalue); i++) { 
-    	$('#modalTimeSelections').append('Time '+i+': <input type="time" class="form-control" placeholder="Text input">');
+	$('#modalTimeSelections').html("Time taken: ");
+	for (i = 0; i < 1; i++) { 
+    	$('#modalTimeSelections').append('<input type="time" class="form-control" placeholder="Text input">');
     }
 
-    $('#modalEmailDiv').html('Email: <input type="email" class="form-control" placeholder="email">');
-	console.log($('#saveButton'));
+    // $('#modalEmailDiv').html('Email: <input type="email" class="form-control" placeholder="email">');
+	// console.log($('#myModal'));
 	$("#saveButton").click(function () {
 		$('#myModal').modal('hide');
-	});
+	})
 	$('#myModal').modal('show');
 }
 });
