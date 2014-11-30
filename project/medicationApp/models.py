@@ -3,28 +3,32 @@ from django.db import models
 # Create your models here.
 class SetAlarm (models.Model):
  #   medication = models.ForeignKey(Medication)
-    dateSetFor = models.DateField()
+    dateSetFor = models.TimeField()
+    def __unicode__(self):
+        return str(self.dateSetFor)
     
 
 class RecordedTaken (models.Model):
  #   medication = models.ForeignKey(Medication)
-    dateTaken = models.DateField()
+    dateTaken = models.TimeField()
+    def __unicode__(self):
+        return str(self.dateTaken)
 
 class Medication(models.Model):
-    drugName = models.CharField(max_length=50)
-    instructions= models.CharField(max_length=50)
+    drugName = models.CharField(max_length=200)
+    instructions= models.CharField(max_length=200)
     startDate = models.DateField()
     freqValue = models.IntegerField()
     freqUnit = models.CharField(max_length=50)
     quantityValue = models.IntegerField()
-    quantityUnit = models.CharField(max_length=50)
+    quantityUnit = models.CharField(max_length=50, default=" ")
     setAlarms= models.ManyToManyField(SetAlarm, blank=True)
     recordedDoses= models.ManyToManyField(RecordedTaken, blank=True)
     def __unicode__(self):
         return self.drugName
 
 class Patient(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=200)
     patient_id = models.CharField(max_length=8)
     medications= models.ManyToManyField(Medication, blank=True)
 

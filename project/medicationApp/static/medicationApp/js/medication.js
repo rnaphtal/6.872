@@ -112,17 +112,17 @@ function addMedsToTable (med_names) {
 
 		// console.log("Should call Medication post called");
 		$.get('http://localhost:8000/getData/medication/', data, function(result) {
-			// console.log("Medication post called");
+			console.log(result);
 			for (x in result) {
    		 		// console.log(result[x].pk)
-   		 		currentMedicationsForRecord[result[x].pk]=data;
+   		 		currentMedicationsForRecord[result[x].pk]=result;
    		 		// console.log(result[x].fields.setAlarms.length);
    		 		if (result[x].fields.setAlarms.length>0) {
    		 			// console.log("should change text");
    		 			$('#editButton'+data.rowValue).html("Edit Alarm")
    		 		}
 			}
-			// console.log(currentMedicationsForRecord);
+			console.log(currentMedicationsForRecord);
 			//console.log(result[0].pk);
 		});
 
@@ -140,7 +140,8 @@ function addMedsToTable (med_names) {
 
 function makeButtonListener(currentMedication, currentRowNumber) {
 	$("#editButton"+currentRowNumber).click(function() {
-		updateModal(currentMedication);
+		console.log(currentRowNumber);
+		updateModal(currentMedication, currentMedicationsForRecord[currentRowNumber]);
 	})
 };
 
@@ -150,8 +151,10 @@ function generateButtonDivText (currentMedication, currentgeneratingrowNumber) {
 			'"> Create Alarm</button></td></tr>');
 	}
 
-function updateModal(single_med) {
+function updateModal(single_med, medRecord) {
 	// console.log("Updating modal");
+	console.log(medRecord);
+	console.log(single_med);
 	var drugname = single_med.drugname.toString().substring(1,single_med.drugname.toString().length-1);
 	var freqvalue = single_med.freqvalue.toString().substring(1,single_med.freqvalue.toString().length-1);
 	var frequnit = single_med.frequnit.toString().substring(1,single_med.frequnit.toString().length-1);
@@ -175,11 +178,15 @@ function updateModal(single_med) {
 	
 	$('#modalTimeSelections').html("");
 	for (i = 0; i < parseInt(freqvalue); i++) { 
-    	$('#modalTimeSelections').append('Time '+i+': <input type="time" class="form-control" placeholder="Text input">');
+
+		    timepickertext='<div class="input-append bootstrap-timepicker"><input id="timepicker'+i+'" type="text" class="input-small">'
+            +'<span class="add-on"><i class="icon-time"></i></span></div>'
+    	$('#modalTimeSelections').append('Time '+i+':'+timepickertext);
+    	$('#timepicker'+i).timepicker();
+    	console.log($('#timepicker'+i).val());
     }
 
     $('#modalEmailDiv').html('Email: <input type="email" class="form-control" placeholder="email">');
-	console.log($('#saveButton'));
 	$("#saveButton").click(function () {
 		$('#myModal').modal('hide');
 	});
