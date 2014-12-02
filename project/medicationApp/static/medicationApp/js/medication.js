@@ -9,12 +9,20 @@ var currentMedicationsForRecord={};
 
 SMART.ready(function(){
 
+reloadTable();
+
 	
 	// console.log(SMART.record);
 	// http://localhost:8000/getData/patient/1993/amy
+	
+       });
+
+function reloadTable () {
+	currentMedicationsForRecord={}
+	//jQuery.ajaxSetup({async:false});
 	$.get('http://localhost:8000/getData/patient/'+SMART.record.id+'/'+SMART.record.full_name, function(data){
 	// $.get('/patient/'+SMART.record.id+"/"+SMART.record.full_name, , function(data){
-               // console.log(data);
+               console.log(data);
            });
          // document.getElementById('name').innerHTML = SMART.record.full_name;
          SMART.get_medications().success(function(meds) {
@@ -23,9 +31,6 @@ SMART.ready(function(){
              .where("?med rdf:type sp:Medication")
              .where("?med sp:drugName ?drug_name_code")
              .where("?drug_name_code dcterms:title ?drugname")
-             // .where("?medication sp:quantity ?quantity_code");
-    //          .optional(" ?drug_code sp:code ?cui")
-			 // .optional(" ?drug_code dcterms:title ?medlabel")
 			 .optional(" ?med sp:strength ?strength")
 			 .optional(" ?med sp:strengthUnit ?strengthUnit")
 			 .optional(" ?med sp:form ?form")
@@ -45,30 +50,9 @@ SMART.ready(function(){
 		    .where("?quantity sp:unit ?quantityunit");
              // console.log(med_names);
              addMedsToTable(med_names);
-      //        var fulfillments = meds.graph
-		    // .where("?med rdf:type sp:Medication")
-		    // .where("?med sp:fulfillment ?f")
-		    // .where("?f dcterms:date ?d")
-		    // .optional("?f sp:dispenseDaysSupply ?q");
-		    // console.log(fulfillments);
-		    // var frequencies = meds.graph
-		    // .where("?med rdf:type sp:Medication")
-		    // .where("?med sp:frequency ?f")
-		    // // .where("?f dcterms:date ?d")
-		    // .optional("?f sp:value ?value")
-		    // optional("?f sp:unit ?unit");
-		    // console.log(frequencies);
-      //       //  var med_dosages = meds.graph
-      //       //  .where("?medication rdf:type sp:Medication")
-      //       //  .where("?medication sp:quantity ?quantity_outer")
-      //       //  .where("?medication sp:ValueAndUnit ?quantity_code")
-      //       //  // .where("?quantity_outer sp:ValueAndUnit ?quantity_code")
-      //       //  // .where("?quantity_code sp:value ?value")
-      //       //  // .where("?quantity_code sp:unit ?unit");
-      //       // console.log(med_dosages);
          }).error(function(err) { alert ("An error has occurred"); });
-       });
 
+}
 String.prototype.replaceAll = function(search, replace) {
     if (replace === undefined) {
         return this.toString();
@@ -77,6 +61,8 @@ String.prototype.replaceAll = function(search, replace) {
 }
 
 function addMedsToTable (med_names) {
+	$('#medTable').empty();
+	$("#medTable").append('<tr> <th> Medication</th><th> Start Date</th><th> Frequency</th><th> Dosage</th><th> Alarms</th></tr>');
 	currentRowNumber=0;
 	med_names.each(function(i, single_med) {
 		// console.log(single_med.freq..where("?med sp:ValueAndUnit"))
@@ -111,22 +97,30 @@ function addMedsToTable (med_names) {
 		}
 
 		// console.log("Should call Medication post called");
+		// console.log(data);
 		$.get('http://localhost:8000/getData/medication/', data, function(result) {
 			console.log(result);
 			for (x in result) {
-   		 		// console.log(result[x].pk)
-   		 		currentMedicationsForRecord[result[x].pk]=result;
+   		 		currentMedicationsForRecord[result[x].fields.drugName]=result;
    		 		// console.log(result[x].fields.setAlarms.length);
    		 		if (result[x].fields.setAlarms.length>0) {
    		 			// console.log("should change text");
-   		 			$('#editButton'+data.rowValue).html("Edit Alarm")
+   		 			$('#editButton'+result[x].fields.row).html("Edit Alarm");
+   		 			$('#editButtonDiv'+result[x].fields.row).append('<button type="button" class="btn btn-danger editButton" style="margin-left: 5px;"id="deleteButton'+result[x].fields.row+'"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>');
+   		 			$("#deleteButton"+result[x].fields.row).click (function () {
+   		 				$.get('http://localhost:8000/deleteAlarm/'+result[x].pk, function(result) {});
+   		 				reloadTable();
+   		 			})
    		 		}
 			}
 			console.log(currentMedicationsForRecord);
 			//console.log(result[0].pk);
 		});
 
-		var newRowText = '<tr><td>'+drugname+'</td><td>'+startDate+
+		formattedDrugName = drugname.replaceAll(" ","+");
+		drugLink = "http://dailymed.nlm.nih.gov/dailymed/search.cfm?adv=1&labeltype=all&query=%28"+formattedDrugName+"%29";
+		console.log(drugLink);
+		var newRowText = '<tr><td><a target="_blank" href="'+drugLink+'">'+drugname+'</a></td><td>'+startDate+
 			'</td><td>'+freqvalue+" "+formattedFrequency+'</td><td>'+
 			quantityvalue+" "+quantityunit+'</td>';
 			// console.log(newRowText);
@@ -147,12 +141,13 @@ function makeButtonListener(currentMedication, currentRowNumber) {
 
 function generateButtonDivText (currentMedication, currentgeneratingrowNumber) {
 	// console.log(currentgeneratingrowNumber);
-		return ('<td><button type="button" class="btn btn-default editButton" id="editButton'+currentgeneratingrowNumber+
+		return ('<td id="editButtonDiv'+currentgeneratingrowNumber+'"><button type="button" class="btn btn-default editButton" id="editButton'+currentgeneratingrowNumber+
 			'"> Create Alarm</button></td></tr>');
 	}
 
-function updateModal(single_med, medRecord) {
+function updateModal(single_med) {
 	// console.log("Updating modal");
+	var medRecord = currentMedicationsForRecord[single_med.drugname.toString().substring(1,single_med.drugname.toString().length-1)];
 	console.log(medRecord);
 	console.log(single_med);
 	var drugname = single_med.drugname.toString().substring(1,single_med.drugname.toString().length-1);
@@ -177,19 +172,51 @@ function updateModal(single_med, medRecord) {
 	}
 	
 	$('#modalTimeSelections').html("");
+	var setAlarms = medRecord[0].fields.setAlarms;
 	for (i = 0; i < parseInt(freqvalue); i++) { 
 
 		    timepickertext='<div class="input-append bootstrap-timepicker"><input id="timepicker'+i+'" type="text" class="input-small">'
             +'<span class="add-on"><i class="icon-time"></i></span></div>'
-    	$('#modalTimeSelections').append('Time '+i+':'+timepickertext);
+    	$('#modalTimeSelections').append('Time '+(i+1)+':'+timepickertext);
+    	// $('#timepicker'+i).timepicker();
+    	if (i<setAlarms.length) {
+    		console.log(setAlarms[i]);
+    		getSetAlarm(setAlarms[i],i);
+
+    		
+    	}
     	$('#timepicker'+i).timepicker();
     	console.log($('#timepicker'+i).val());
     }
 
-    $('#modalEmailDiv').html('Email: <input type="email" class="form-control" placeholder="email">');
+    $('#modalEmailDiv').html('Email: <input type="email" id="emailInput" class="form-control" placeholder="email">');
 	$("#saveButton").click(function () {
+		updateSetAlarm(medRecord[0].pk, freqvalue);
+		reloadTable();
 		$('#myModal').modal('hide');
 	});
 	$('#myModal').modal('show');
 }
 });
+
+function getSetAlarm (id, i) {
+	console.log("attempting to get"+'http://localhost:8000/getData/getAlarm/'+id);
+	$.get('http://localhost:8000/getData/getAlarm/'+id,function(result) {
+			console.log(result);
+			$('#timepicker'+i).val(result[0].fields.dateSetFor)
+			$('#emailInput').val(result[0].fields.email)
+			//console.log(result[0].pk);
+		});
+}
+
+function updateSetAlarm (medicationpk, numAlarms) {
+
+	$.get('http://localhost:8000/deleteAlarm/'+medicationpk, function(result) {});
+	console.log("deleted")
+	for (i=0;i<numAlarms;i++) {
+		data={'time': $('#timepicker'+i).val(),'email':$('#emailInput').val()};
+		$.get('http://localhost:8000/addAlarm/'+medicationpk, data, function(result) {});
+	}
+	
+	
+}
