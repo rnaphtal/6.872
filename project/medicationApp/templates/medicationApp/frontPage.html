@@ -25,27 +25,27 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand active" href="/frontPage">My Meds</a>
+          <a class="navbar-brand active" href="/">My Meds</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="/">Alarms</a></li>
+            <li><a href="/alarms">Alarms</a></li>
             <li><a href="/my_calendar">Calendar</a></li>
-            <li><a href="../record">Record Alarm</a></li>
+            <li><a href="../record">Took It!</a></li>
           </ul>
         </div><!--/.nav-collapse -->
       </div>
     </nav>
 
 <div id="columns">
-  <button type="button" class="column-left rounded"><a class="button_link" href="/"> 
+  <button type="button" class="column-left rounded"><a class="button_link" href="/alarms"> 
     <img src="{% static 'medicationApp/images/alarms.png' %}" class= "button_img"> Alarms
   </a>
   </button>
   <button type="button" class="column-center rounded"> <a class="button_link" href='/my_calendar'><img src="{% static 'medicationApp/images/calendar1.png' %}" class= "button_img"> Calendar
   </a>
   </button>
-  <button type="button" class="column-right rounded">  <a class="button_link" href='/record'>    <img src="{% static 'medicationApp/images/check_mark.png' %}" class= "button_img"> Took it!
+  <button type="button" class="column-right rounded">  <a class="button_link" href='/record'>    <img src="{% static 'medicationApp/images/check_mark.png' %}" class= "button_img"> Took It!
   </a>
   </button>
 </div>
