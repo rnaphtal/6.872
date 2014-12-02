@@ -32,6 +32,7 @@ def getPatient(request, patientId, patientName):
        currentPatient = Patient(patient_id=patientId, name=patientName)
        currentPatient.save()
        currentPatient=Patient.objects.filter(patient_id=patientId)
+   #print "Alarms set 35:",currentPatient.medications[0].setAlarms
    data = serializers.serialize('json', currentPatient)
    return HttpResponse(data, content_type="application/json")
 
@@ -39,7 +40,6 @@ def getMedication(request):
    #print request
    parameters=request.GET.dict()
    currentMedication=Medication.objects.filter(drugName=parameters["drugname"]).filter(startDate=parameters["startDate"])
-   print currentMedication
    if (not currentMedication):
        currentMedication = Medication(drugName=parameters["drugname"],
                                       instructions=parameters["instructions"],
@@ -47,10 +47,15 @@ def getMedication(request):
                                       freqValue=parameters["freqvalue"],
                                       freqUnit=parameters["frequnit"],
                                       quantityValue=parameters["quantityvalue"],
-                                      quantityUnit=parameters["quantityunit"])
+                                      quantityUnit=parameters["quantityunit"],
+                                      row =parameters["rowValue"],)
        currentMedication.save()
        currentMedication= Medication.objects.filter(drugName=parameters["drugname"]).filter(startDate=parameters["startDate"])
+   for temp in currentMedication:
+       temp.row=parameters["rowValue"]
+       temp.save()
    data = serializers.serialize('json', currentMedication)
+   print data
    return HttpResponse(data, content_type="application/json")
 
 def test(request):
@@ -65,7 +70,6 @@ def test(request):
     return HttpResponse(template.render(context))
 
 def my_calendar(request):
-   # return HttpResponse("Hello, world. You're at the medicaiton app index.")
     template = loader.get_template('medicationApp/my_calendar.html')
     context = RequestContext(request, {
     })
@@ -76,3 +80,38 @@ def record(request):
     context = RequestContext(request, {
     })
     return HttpResponse(template.render(context))
+
+def getAllAlarms(request):
+   result= SetAlarm.objects.all()
+   data = serializers.serialize('json', result)
+   print data
+   return HttpResponse(data, content_type="application/json")
+
+def getAlarm(request, alarmId):
+   result= SetAlarm.objects.filter(pk=alarmId)
+   print "alarm found", result
+   data = serializers.serialize('json', result)
+   #print data
+   return HttpResponse(data, content_type="application/json")
+
+def addAlarm(request, alarmId):
+   result= Medication.objects.filter(pk=alarmId)
+   parameters=request.GET.dict() #parameters["time"]
+   for item in result:
+    newalarm = SetAlarm.objects.create(dateSetFor=parameters["time"], email=parameters["email"])
+    item.setAlarms.add(newalarm)
+    item.save()
+   data = serializers.serialize('json', result)
+   #print data
+   return HttpResponse(data, content_type="application/json")
+
+def deleteAlarm(request, medicationId):
+   result= Medication.objects.filter(pk=medicationId)
+   for item in result:
+    item.setAlarms = []
+    item.save()
+   data = serializers.serialize('json', result)
+   #print data
+   return HttpResponse(data, content_type="application/json")
+
+

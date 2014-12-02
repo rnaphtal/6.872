@@ -4,6 +4,7 @@ from django.db import models
 class SetAlarm (models.Model):
  #   medication = models.ForeignKey(Medication)
     dateSetFor = models.TimeField()
+    email = models.EmailField(default="medreminder@gmail.com")
     def __unicode__(self):
         return str(self.dateSetFor)
     
@@ -19,9 +20,10 @@ class Medication(models.Model):
     instructions= models.CharField(max_length=200)
     startDate = models.DateField()
     freqValue = models.IntegerField()
+    row = models.IntegerField()
     freqUnit = models.CharField(max_length=50)
     quantityValue = models.IntegerField()
-    quantityUnit = models.CharField(max_length=50, default=" ")
+    quantityUnit = models.CharField(max_length=50, blank=True)
     setAlarms= models.ManyToManyField(SetAlarm, blank=True)
     recordedDoses= models.ManyToManyField(RecordedTaken, blank=True)
     def __unicode__(self):
