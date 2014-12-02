@@ -76,3 +76,11 @@ def record(request):
     context = RequestContext(request, {
     })
     return HttpResponse(template.render(context))
+    
+
+def frontPage(request):
+   # return HttpResponse("Hello, world. You're at the medicaiton app index.")
+    template = loader.get_template('medicationApp/frontPage.html')
+    context = RequestContext(request, {
+    })
+    return HttpResponse(template.render(context))

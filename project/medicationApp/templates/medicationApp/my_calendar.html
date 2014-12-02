@@ -1,9 +1,9 @@
 {% load staticfiles %}
-<!link rel="stylesheet" type="text/css" href="{% static 'medicationApp/css/style.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'medicationApp/css/jquery-ui.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'medicationApp/css/bootstrap.min.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'medicationApp/css/bootstrap-theme.css' %}" />
 <link rel="stylesheet" type="text/css" href="{% static 'medicationApp/css/bootstrap.css' %}" />
+<link rel="stylesheet" type="text/css" href="{% static 'medicationApp/css/style.css' %}" />
 
 <script type="text/javascript" src="{% static 'medicationApp/js/jquery-2.1.1.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'medicationApp/js/jquery-ui.js' %}"></script>
@@ -66,12 +66,12 @@ $(document).ready(function() {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="/">My Meds</a>
+          <a class="navbar-brand" href="/frontPage">My Meds</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
           <ul class="nav navbar-nav">
-            <li><a href="../">Home</a></li>
-            <li class = "active"><a href="#my_calendar">Calendar</a></li>
+            <li><a href="/">Alarms</a></li>
+            <li class = "active"><a href="/my_calendar">Calendar</a></li>
             <li><a href="../record">Record Alarm</a></li>
           </ul>
         </div><!--/.nav-collapse -->

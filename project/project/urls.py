@@ -17,5 +17,7 @@ urlpatterns = patterns('',
     url(r'^getData/medication/', views.getMedication),
     url(r'^$', views.index, name='index'),
     url(r'^my_calendar/', views.my_calendar, name='my_calendar'),
-    url(r'^record/', views.record, name='my_calendar')
+    url(r'^record/', views.record, name='my_calendar'),
+    url(r'^frontPage/', views.frontPage, name='frontPage')
+
 )
