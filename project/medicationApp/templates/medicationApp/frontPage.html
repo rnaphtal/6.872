@@ -15,6 +15,12 @@
 
 <link rel="stylesheet" type="text/css" href="{% static 'medicationApp/css/style.css' %}" />
 
+ <script>
+    SMART.ready(function(){
+      document.getElementById('name').innerHTML = SMART.record.full_name;
+    });
+  </script>
+
 
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
       <div class="container">
@@ -36,6 +42,10 @@
         </div><!--/.nav-collapse -->
       </div>
     </nav>
+
+<div id="hello">
+<h1 class="name">Hello <span id="name"></span></h1>
+</div>
 
 <div id="columns">
   <button type="button" class="column-left rounded"><a class="button_link" href="/alarms"> 

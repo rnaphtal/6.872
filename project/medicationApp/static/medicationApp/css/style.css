@@ -1,5 +1,5 @@
 .column-left{
-    margin-top: 100px;
+    margin-top: 20px;
     margin-right: 3%;
     margin-left: 5%;
     float: left; 
@@ -9,7 +9,7 @@
 
 }
 .column-right{ 
-    margin-top: 100px;
+    margin-top: 20px;
     float: right; 
     margin-left: 3%;
     margin-right: 5%;
@@ -18,7 +18,7 @@
     padding-top: 20px;
 }
 .column-center{ 
-    margin-top: 100px;
+    margin-top: 20px;
     display: inline-block; 
     width: 28%;
     padding-bottom: 20px;
@@ -59,5 +59,13 @@ th{
 td {
     max-width: 300;
 }
+
+h1.name {
+    font-weight: 300;
+    font-size: 2cm;
+    margin-top: 75px;
+    text-align: center;
+}
+
 
 
