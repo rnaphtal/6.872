@@ -48,3 +48,16 @@
 a.button_link:hover {
     color:white;
 }
+
+#medTable {
+    font-weight: 200;
+}
+th{
+    font-weight: 300;
+    font-size: .6cm;
+}
+td {
+    max-width: 300;
+}
+
+
