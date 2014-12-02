@@ -147,7 +147,10 @@ function updateModal(single_med) {
 	
 	$('#modalTimeSelections').html("Time taken: ");
 	for (i = 0; i < 1; i++) { 
-    	$('#modalTimeSelections').append('<input type="time" class="form-control" placeholder="Text input">');
+		timepickertext='<div class="input-append bootstrap-timepicker"><input id="timepicker'+i+'" type="text" class="input-small">'
+            +'<span class="add-on"><i class="icon-time"></i></span></div>'
+    	$('#modalTimeSelections').append(timepickertext);
+    	$('#timepicker'+i).timepicker();
     }
 
     // $('#modalEmailDiv').html('Email: <input type="email" class="form-control" placeholder="email">');
