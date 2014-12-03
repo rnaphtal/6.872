@@ -1,18 +1,14 @@
 $(document).ready(function(){
-$("#peteButton").click(function() {
-	var url = "/pete";    
-$(location).attr('href',url);
-  //alert( "Handler for .click() called." );
-});
 
 var currentMedicationsForRecord={};
+var loadedMedications;
 
 SMART.ready(function(){
-
-	
 	$.get('http://localhost:8000/getData/patient/'+SMART.record.id+'/'+SMART.record.full_name, function(data){
-
+	// $.get('/patient/'+SMART.record.id+"/"+SMART.record.full_name, , function(data){
+               console.log(data);
            });
+         // document.getElementById('name').innerHTML = SMART.record.full_name;
          SMART.get_medications().success(function(meds) {
            // console.log(meds);
            var med_names = meds.graph
@@ -37,10 +33,25 @@ SMART.ready(function(){
 		    .where("?quantity sp:value ?quantityvalue")
 		    .where("?quantity sp:unit ?quantityunit");
              // console.log(med_names);
-             addMedsToTable(med_names);
+             loadedMedications= med_names=
+             reloadTable();
          }).error(function(err) { alert ("An error has occurred"); });
+
+
+
+	
+	// console.log(SMART.record);
+	// http://localhost:8000/getData/patient/1993/amy
+	
        });
 
+function reloadTable () {
+	addMedsToTable(loadedMedications);
+	currentMedicationsForRecord={}
+	//jQuery.ajaxSetup({async:false});
+	
+
+}
 String.prototype.replaceAll = function(search, replace) {
     if (replace === undefined) {
         return this.toString();
@@ -49,6 +60,8 @@ String.prototype.replaceAll = function(search, replace) {
 }
 
 function addMedsToTable (med_names) {
+	$('#medTable').empty();
+	$("#medTable").append('<tr> <th> Medication</th><th> Start Date</th><th> Frequency</th><th> Dosage</th><th> Alarms</th></tr>');
 	currentRowNumber=0;
 	med_names.each(function(i, single_med) {
 		// console.log(single_med.freq..where("?med sp:ValueAndUnit"))
@@ -83,22 +96,30 @@ function addMedsToTable (med_names) {
 		}
 
 		// console.log("Should call Medication post called");
-		$.get('http://localhost:8000/getData/medication/', data, function(result) {
-			// console.log("Medication post called");
-			for (x in result) {
-   		 		// console.log(result[x].pk)
-   		 		currentMedicationsForRecord[result[x].pk]=data;
-   		 		// console.log(result[x].fields.setAlarms.length);
-   		 		// if (result[x].fields.setAlarms.length>0) {
-   		 		// 	console.log("should change text");
-   		 		// 	$('#editButton'+data.rowValue).html("I took it!")
-   		 		// }
-			}
-			// console.log(currentMedicationsForRecord);
-			//console.log(result[0].pk);
-		});
+		// console.log(data);
+		// $.get('http://localhost:8000/getData/medication/', data, function(result) {
+		// 	console.log(result);
+		// 	// for (x in result) {
+  //  // 		 		currentMedicationsForRecord[result[x].fields.drugName]=result;
+  //  // 		 		// console.log(result[x].fields.setAlarms.length);
+  //  // 		 		if (result[x].fields.setAlarms.length>0) {
+  //  // 		 			// console.log("should change text");
+  //  // 		 			$('#editButton'+result[x].fields.row).html("Edit Alarm");
+  //  // 		 			$('#editButtonDiv'+result[x].fields.row).append('<button type="button" class="btn btn-danger editButton" style="margin-left: 5px;"id="deleteButton'+result[x].fields.row+'"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>');
+  //  // 		 			$("#deleteButton"+result[x].fields.row).click (function () {
+  //  // 		 				$.get('http://localhost:8000/deleteAlarm/'+result[x].pk, function(result) {});
+  //  // 		 				reloadTable();
+  //  // 		 			})
+  //  // 		 		}
+		// 	// }
+		// 	console.log(currentMedicationsForRecord);
+		// 	//console.log(result[0].pk);
+		// });
 
-		var newRowText = '<tr><td>'+drugname+'</td><td>'+startDate+
+		formattedDrugName = drugname.replaceAll(" ","+");
+		drugLink = "http://dailymed.nlm.nih.gov/dailymed/search.cfm?adv=1&labeltype=all&query=%28"+formattedDrugName+"%29";
+		// console.log(drugLink);
+		var newRowText = '<tr><td><a target="_blank" href="'+drugLink+'">'+drugname+'</a></td><td>'+startDate+
 			'</td><td>'+freqvalue+" "+formattedFrequency+'</td><td>'+
 			quantityvalue+" "+quantityunit+'</td>';
 			// console.log(newRowText);
@@ -112,18 +133,22 @@ function addMedsToTable (med_names) {
 
 function makeButtonListener(currentMedication, currentRowNumber) {
 	$("#editButton"+currentRowNumber).click(function() {
-		updateModal(currentMedication);
+		console.log(currentRowNumber);
+		updateModal(currentMedication, currentRowNumber);
 	})
 };
 
 function generateButtonDivText (currentMedication, currentgeneratingrowNumber) {
 	// console.log(currentgeneratingrowNumber);
-		return ('<td><button type="button" class="btn btn-default editButton" id="editButton'+currentgeneratingrowNumber+
+		return ('<td id="editButtonDiv'+currentgeneratingrowNumber+'"><button type="button" class="btn btn-default editButton" id="editButton'+currentgeneratingrowNumber+
 			'"> I took it! </button></td></tr>');
 	}
 
-function updateModal(single_med) {
+function updateModal(single_med, currentRowNumber) {
 	// console.log("Updating modal");
+	var medRecord = currentMedicationsForRecord[single_med.drugname.toString().substring(1,single_med.drugname.toString().length-1)];
+	console.log(medRecord);
+	console.log(single_med);
 	var drugname = single_med.drugname.toString().substring(1,single_med.drugname.toString().length-1);
 	var freqvalue = single_med.freqvalue.toString().substring(1,single_med.freqvalue.toString().length-1);
 	var frequnit = single_med.frequnit.toString().substring(1,single_med.frequnit.toString().length-1);
@@ -138,26 +163,30 @@ function updateModal(single_med) {
 		formattedFrequency=" per month"
 	}
 
-	$('#myModalLabel').html("Record dose of "+drugname);
+	$('#myModalLabel').html("Modify alarm for "+drugname);
 	if (parseInt(freqvalue)==1) {
 		$('#modalFrequency').html("This medication should be taken "+freqvalue+" time " + formattedFrequency+".");
 	} else{
 		$('#modalFrequency').html("This medication should be taken "+freqvalue+" times " + formattedFrequency+".");
 	}
 	
-	$('#modalTimeSelections').html("Time taken: ");
-	for (i = 0; i < 1; i++) { 
-		timepickertext='<div class="input-append bootstrap-timepicker"><input id="timepicker'+i+'" type="text" class="input-small">'
-            +'<span class="add-on"><i class="icon-time"></i></span></div>'
-    	$('#modalTimeSelections').append(timepickertext);
-    	$('#timepicker'+i).timepicker();
-    }
+	$('#modalTimeSelections').html("");
+	
 
-    // $('#modalEmailDiv').html('Email: <input type="email" class="form-control" placeholder="email">');
-	// console.log($('#myModal'));
+		    timepickertext='<div class="input-append bootstrap-timepicker"><input id="timepicker" type="text" class="input-small">'
+            +'<span class="add-on"><i class="icon-time"></i></span></div>'
+    	$('#modalTimeSelections').append('Time taken:'+timepickertext);
+    	// $('#timepicker'+i).timepicker();
+
+    	$('#timepicker').timepicker();
+
 	$("#saveButton").click(function () {
+		$("#editButton"+currentRowNumber).html('<img src="http://www.clker.com/cliparts/e/2/a/d/1206574733930851359Ryan_Taylor_Green_Tick.svg.hi.png" style="height: 20px;"/>');
+		// $("#editButton"+currentRowNumber).addClass("btn-success")
 		$('#myModal').modal('hide');
-	})
+	});
 	$('#myModal').modal('show');
 }
 });
+	
+
