@@ -1,7 +1,7 @@
 $(document).ready(function(){
 
 var currentMedicationsForRecord={};
-var loadedMedications;
+var loadedMedications="hello";
 
 SMART.ready(function(){
 	$.get('http://localhost:8000/getData/patient/'+SMART.record.id+'/'+SMART.record.full_name, function(data){
@@ -33,7 +33,9 @@ SMART.ready(function(){
 		    .where("?quantity sp:value ?quantityvalue")
 		    .where("?quantity sp:unit ?quantityunit");
              // console.log(med_names);
-             loadedMedications= med_names=
+             console.log(loadedMedications)
+             loadedMedications= med_names;
+             console.log(med_names)
              reloadTable();
          }).error(function(err) { alert ("An error has occurred"); });
 
@@ -46,6 +48,7 @@ SMART.ready(function(){
        });
 
 function reloadTable () {
+	console.log(loadedMedications);
 	addMedsToTable(loadedMedications);
 	currentMedicationsForRecord={}
 	//jQuery.ajaxSetup({async:false});
